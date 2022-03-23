@@ -94,3 +94,34 @@ describe('Test API Endpoints', () => {
     await mongoose.connection.close();
   })
 })
+
+describe('Test API with disconnected database', () => {
+  beforeAll(async () => {
+    await mongoose.connection.close();
+  })
+
+  it('Expects GET / route to give 400', async () => {
+    const response = await request(app).get('/api/cache/');
+    expect(response.statusCode).toBe(400);
+  })
+
+  it('Expects GET /:id route to give 400', async () => {
+    const response = await request(app).get('/api/cache/123');
+    expect(response.statusCode).toBe(400);
+  })
+
+  it('Expects POST /:id route to give 400', async () => {
+    const response = await request(app).post('/api/cache/123');
+    expect(response.statusCode).toBe(400);
+  })
+
+  it('Expects DELETE /:id route to give 400', async () => {
+    const response = await request(app).delete('/api/cache/123');
+    expect(response.statusCode).toBe(400);
+  })
+
+  it('Expects DELETE / route to give 400', async () => {
+    const response = await request(app).delete('/api/cache/');
+    expect(response.statusCode).toBe(400);
+  })
+});

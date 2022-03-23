@@ -1,9 +1,19 @@
-import express, { Request, Response } from "express";
+import mongoose from "mongoose";
+import express, { Request, Response, NextFunction } from "express";
 import CacheService from '../services/cache.service';
 
 const app = express.Router();
 
 const cacheService = new CacheService();
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (mongoose.connection.readyState !== 1) {
+    res.status(400);
+    res.json({ error: 'Server not ready!' });
+  } else {
+    next();
+  }
+})
 
 app.get('/', async (req: Request, res: Response) => {
   const caches = await cacheService.index();
