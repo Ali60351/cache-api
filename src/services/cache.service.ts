@@ -3,7 +3,6 @@ import addMinutes from 'date-fns/addMinutes';
 import isPast from 'date-fns/isPast';
 
 import cacheModel from '../models/cache.model';
-import { Cache } from '../types';
 import { CACHE_LIFE_SPAN, MAX_CACHE_COUNT } from '../config';
 
 export default class CacheService {
@@ -56,7 +55,8 @@ export default class CacheService {
     }
 
     console.log('Cache hit', key)
-    return cache;
+    cache.expiry = addMinutes(new Date(), CACHE_LIFE_SPAN)
+    return await cache.save();
   }
 
   createOrUpdate = async (key: string) => {
