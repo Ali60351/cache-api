@@ -24,7 +24,7 @@ export default class CacheService {
     return caches;
   }
 
-  show = async (key: string) => {
+  getOrCreate = async (key: string) => {
     let cache = await this.model.findOne({ key });
 
     if (!cache) {
@@ -42,7 +42,7 @@ export default class CacheService {
     return cache;
   }
 
-  create = async (key: string) => {
+  createOrUpdate = async (key: string) => {
     let cache = await this.model.findOne({ key });
 
     if (cache) {
