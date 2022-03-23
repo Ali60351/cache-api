@@ -53,4 +53,14 @@ export default class CacheService {
 
     return await this.createInstance(key);
   }
+
+  delete = async (key: string) => {
+    const { deletedCount } = await this.model.deleteOne({ key });
+    return deletedCount;
+  }
+
+  deleteAll = async () => {
+    const { deletedCount } = await this.model.deleteMany({});
+    return deletedCount;
+  }
 }
