@@ -4,12 +4,29 @@ import isPast from 'date-fns/isPast';
 
 import cacheModel from '../models/cache.model';
 import { Cache } from '../types';
-import { CACHE_LIFE_SPAN } from '../config';
+import { CACHE_LIFE_SPAN, MAX_CACHE_COUNT } from '../config';
 
 export default class CacheService {
   model = cacheModel;
 
+  maintainCacheLimit = async () => {
+    let caches = await this.model.find({}).sort({ expiry: 1 });
+    let cacheCount = caches.length;
+
+    for (const cache of caches) {
+      const cacheExpired = isPast(cache.expiry);
+      const cacheOverflown = (cacheCount + 1) > MAX_CACHE_COUNT;
+
+      if (cacheExpired || cacheOverflown) {
+        await cache.remove();
+        cacheCount = cacheCount - 1;
+      }
+    }
+  }
+
   createInstance = async (key: string) => {
+    this.maintainCacheLimit();
+
     const cache = new this.model({
       key,
       value: uuid.v4(),
@@ -20,7 +37,7 @@ export default class CacheService {
   }
 
   index = async () => {
-    const caches: Array<Cache> = await this.model.find({}, 'key');
+    const caches = await this.model.find({}, 'key');
     return caches;
   }
 
