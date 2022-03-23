@@ -6,7 +6,7 @@ import CacheService from '../services/cache.service';
 
 const cacheService = new CacheService();
 
-describe('Test API Endpoints', () => {
+describe('Test API Endpoints in normal conditions', () => {
   beforeEach(async () => {
     await cacheService.deleteAll();
   });

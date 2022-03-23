@@ -8,7 +8,7 @@ const cacheService = new CacheService();
 
 jest.mock('date-fns/isPast', () => () => true)
 
-describe('Test API Endpoints', () => {
+describe('Test API Endpoints in case of expired keys', () => {
   beforeEach(async () => {
     await cacheService.deleteAll();
   });
