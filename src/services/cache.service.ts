@@ -5,6 +5,8 @@ import isPast from 'date-fns/isPast';
 import cacheModel from '../models/cache.model';
 import { CACHE_LIFE_SPAN, MAX_CACHE_COUNT } from '../config';
 
+type CacheDocument = Awaited<ReturnType<CacheService['createInstance']>>;
+
 export default class CacheService {
   model = cacheModel;
 
@@ -40,35 +42,40 @@ export default class CacheService {
     return caches;
   }
 
-  getOrCreate = async (key: string) => {
+  getOrCreate = async (key: string): Promise<[cache: CacheDocument, isCreated: boolean]> => {
     let cache = await this.model.findOne({ key });
 
     if (!cache) {
       console.log('Cache miss', key);
-      return await this.createInstance(key);
+      const newCache = await this.createInstance(key);
+      return [newCache, true];
     } else if (isPast(cache.expiry)) {
       console.log('Cache miss', key);
 
       cache.value = uuid.v4();
       cache.expiry = addMinutes(new Date(), CACHE_LIFE_SPAN)
-      return await cache.save();
+      const updatedCache = await cache.save();
+      return [updatedCache, false];
     }
 
     console.log('Cache hit', key)
     cache.expiry = addMinutes(new Date(), CACHE_LIFE_SPAN)
-    return await cache.save();
+    const updatedCache = await cache.save();
+    return [updatedCache, false];
   }
 
-  createOrUpdate = async (key: string) => {
+  createOrUpdate = async (key: string): Promise<[cache: CacheDocument, isCreated: boolean]> => {
     let cache = await this.model.findOne({ key });
 
     if (cache) {
       cache.value = uuid.v4();
       cache.expiry = addMinutes(new Date(), CACHE_LIFE_SPAN)
-      return cache.save();
+      const updatedCache = await cache.save();
+      return [updatedCache, false];
     }
 
-    return await this.createInstance(key);
+    const createdCache = await this.createInstance(key);
+    return [createdCache, true];
   }
 
   delete = async (key: string) => {

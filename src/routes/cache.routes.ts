@@ -14,17 +14,17 @@ app.get('/', async (req: Request, res: Response) => {
 
 app.get('/:key', async (req: Request, res: Response) => {
   const { key } = req.params;
-  const cache = await cacheService.getOrCreate(key);
+  const [cache, created] = await cacheService.getOrCreate(key);
 
-  res.status(200);
+  res.status(created ? 201 : 200);
   res.json(cache.value)
 });
 
 app.post('/:key', async (req: Request, res: Response) => {
   const { key } = req.params;
-  const cache = await cacheService.createOrUpdate(key);
+  const [cache, created] = await cacheService.createOrUpdate(key);
 
-  res.status(200);
+  res.status(created ? 201 : 200);
   res.json(cache.value)
 });
 
