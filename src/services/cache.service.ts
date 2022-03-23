@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 import addMinutes from 'date-fns/addMinutes';
 import isPast from 'date-fns/isPast';
 

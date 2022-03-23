@@ -1,5 +1,7 @@
 import express from 'express';
+
 import cacheRoutes from './routes/cache.routes';
+import './database';
 
 const app = express();
 

@@ -6,10 +6,10 @@ const app = express.Router();
 const cacheService = new CacheService();
 
 app.get('/', async (req: Request, res: Response) => {
-  const cacheKeys = await cacheService.index();
+  const caches = await cacheService.index();
 
   res.status(200);
-  res.json(cacheKeys);
+  res.json(caches.map(cache => cache.key));
 });
 
 app.get('/:key', async (req: Request, res: Response) => {
@@ -17,7 +17,7 @@ app.get('/:key', async (req: Request, res: Response) => {
   const cache = await cacheService.getOrCreate(key);
 
   res.status(200);
-  res.json(cache)
+  res.json(cache.value)
 });
 
 app.post('/:key', async (req: Request, res: Response) => {
@@ -25,7 +25,7 @@ app.post('/:key', async (req: Request, res: Response) => {
   const cache = await cacheService.createOrUpdate(key);
 
   res.status(200);
-  res.json(cache)
+  res.json(cache.value)
 });
 
 app.delete('/:key', async (req: Request, res: Response) => {
