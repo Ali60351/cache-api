@@ -21,4 +21,4 @@
 | `/cache/api/:id` | DELETE | Delete cache for key `:id`           |
 | `/cache/api/`    | DELETE | Delete all caches                    |
 
-[Postman Collection](./Cache API Collection.postman_collection.json)
+[Postman Collection](https://github.com/Ali60351/cache-api/blob/master/Cache%20API%20Collection.postman_collection.json)
