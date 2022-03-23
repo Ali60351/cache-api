@@ -9,6 +9,16 @@ import { CACHE_LIFE_SPAN } from '../config';
 export default class CacheService {
   model = cacheModel;
 
+  createInstance = async (key: string) => {
+    const cache = new this.model({
+      key,
+      value: uuid.v4(),
+      expiry: addMinutes(new Date(), CACHE_LIFE_SPAN)
+    });
+
+    return await cache.save();
+  }
+
   index = async () => {
     const caches: Array<Cache> = await this.model.find({}, 'key');
     return caches;
@@ -18,21 +28,29 @@ export default class CacheService {
     let cache = await this.model.findOne({ key });
 
     if (!cache) {
-      console.log('Cache miss for', key);
-
-      return new this.model({
-        key,
-        value: uuid.v4(),
-        expiry: addMinutes(new Date(), CACHE_LIFE_SPAN)
-      });
+      console.log('Cache miss', key);
+      return await this.createInstance(key);
     } else if (isPast(cache.expiry)) {
-      console.log('Cache miss for', key);
+      console.log('Cache miss', key);
 
       cache.value = uuid.v4();
       cache.expiry = addMinutes(new Date(), CACHE_LIFE_SPAN)
       return await cache.save();
     }
 
+    console.log('Cache hit', key)
     return cache;
+  }
+
+  create = async (key: string) => {
+    let cache = await this.model.findOne({ key });
+
+    if (cache) {
+      cache.value = uuid.v4();
+      cache.expiry = addMinutes(new Date(), CACHE_LIFE_SPAN)
+      return cache.save();
+    }
+
+    return await this.createInstance(key);
   }
 }
