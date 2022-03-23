@@ -1,6 +1,8 @@
 {
   "scripts": {
-    "watch": "NODE_ENV=development nodemon src/index.ts"
+    "watch": "NODE_ENV=development nodemon src/index.ts",
+    "test": "NODE_ENV=test jest --config jest.config.ts",
+    "start": "NODE_ENV=development ts-node src/index.ts"
   },
   "dependencies": {
     "date-fns": "^2.28.0",

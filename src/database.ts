@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
 import { DATABASE_URL } from "./config";
 
-var mongoDB = DATABASE_URL as string;
-mongoose.connect(mongoDB);
-
 var db = mongoose.connection;
 
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+if (db.readyState !== 1) {
+  var mongoDB = DATABASE_URL as string;
+  mongoose.connect(mongoDB);
+
+  db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+}

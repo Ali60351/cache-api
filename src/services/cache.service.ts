@@ -10,9 +10,18 @@ type CacheDocument = Awaited<ReturnType<CacheService['createInstance']>>;
 export default class CacheService {
   model = cacheModel;
 
+  /*
+  If Cache Count exceeds MAX_CACHE_COUNT. Sort caches by expiry and continue deleting till cache count
+  goes below MAX_CACHE_COUNT or all expired caches are deleted.
+  */
   maintainCacheLimit = async () => {
     let caches = await this.model.find({}).sort({ expiry: 1 });
     let cacheCount = caches.length;
+    const cacheCountExceeded = (cacheCount + 1) > MAX_CACHE_COUNT;
+
+    if (!cacheCountExceeded) {
+      return;
+    }
 
     for (const cache of caches) {
       const cacheExpired = isPast(cache.expiry);

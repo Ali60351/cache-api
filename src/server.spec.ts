@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import request from 'supertest';
 
 import app from './server';
@@ -8,4 +9,8 @@ describe('Test express server', () => {
 
     expect(response.statusCode).toBe(200);
   });
+
+  afterAll(async () => {
+    await mongoose.connection.close();
+  })
 })
